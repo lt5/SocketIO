@@ -1,0 +1,35 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+<script>
+	var socket = io.connect('http://localhost:8081');
+	var mydocument = $('#document').val();
+
+	socket.on('connect', function(){
+		socket.emit('adduser', prompt("Enter your name"));
+	});
+
+	socket.on('updatedocument', function (username, data) {
+		$('#document').val(data);
+	});
+
+	socket.on('updateusers', function(data) {
+		$('#users').empty();
+		$.each(data, function(key, value) {
+			$('#users').append('<div>' + key + '</div>');
+		});
+	});
+
+	$(function(){
+		$('#document').keyup(function(e) {
+			var mydocument = $('#document').val();
+			socket.emit('senddocument', mydocument);
+		});
+	});
+
+</script>
+
+<p>Current Editors: <b><div id="users"></div></b></p>
+
+<div class="documentContainer">
+	<textarea name="document" id="document" rows="10">This is an example of doucment editing</textarea>
+</div>
